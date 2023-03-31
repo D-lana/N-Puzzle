@@ -1,4 +1,5 @@
 #include "Library.hpp"
+#include <chrono>
 
 // g - стоимость пройденного пути
 // h - стоимость оставшегося пути
@@ -22,7 +23,14 @@ int main() {
 	if (puzzle.getStatus() == READY) {
 		PuzzleSolver pSolver(puzzle);
 		pSolver.genSolvePuzzle();
+		auto begin = std::chrono::steady_clock::now();
+		//--------
 		pSolver.startAlgorithmAStar();
+		//--------
+		auto end = std::chrono::steady_clock::now();
+		auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin);
+		std::cout << "The time: " << elapsed_ms.count() << " ms\n";
+		
 		pSolver.h(3, 1);
 	}
 	
