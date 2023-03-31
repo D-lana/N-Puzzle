@@ -51,6 +51,23 @@ inline int toNumber(std::string s)
 	return value;
 }
 
+enum e_color
+{
+	RED = 91,
+	GREEN = 92,
+	YELLOW = 93,
+	DARK_BLUE = 94,
+	PINK = 95,
+	BLUE = 96,
+	GRAY = 30
+};
+
+inline void print(e_color color, std::string str) 
+{
+	std::cout << "\x1b[1;" << color << "m";
+	std::cout << str << "\x1b[0m";
+}
+
 // inline int heuristicFunc(int g, int x, int y) 
 // {
 // 	int h = 0;

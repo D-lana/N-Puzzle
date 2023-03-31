@@ -2,7 +2,7 @@
 
 PuzzleSolver::PuzzleSolver(Puzzle &_puzzle)
 : puzzle(_puzzle), 
-start(puzzle.getStartX(), puzzle.getStartY(), 0, 0) {
+start(puzzle.getStartY(), puzzle.getStartX(), 0, 0) {
 	start.h = h(start.x, start.y);
 	std::cout << "Constructor PuzzleSolver call" << std::endl;
 }
@@ -54,7 +54,7 @@ void PuzzleSolver::genSolvePuzzle() {
 	std::cout << std::endl;
 }
 
-void PuzzleSolver::initOpen(int g, int x, int y, std::deque<s_Point> &open) {
+void PuzzleSolver::initOpen(int g, int x, int y) {
 	int size_p = puzzle.getSize();
 	if (x - 1 > 0) {
 		open.push_back(s_Point(x - 1, y, g + 1, h(x - 1, y)));
@@ -68,14 +68,18 @@ void PuzzleSolver::initOpen(int g, int x, int y, std::deque<s_Point> &open) {
 	if (y + 1 <= size_p) {
 		open.push_back(s_Point(x, y + 1, g + 1, h(x, y + 1)));
 	}
+	print(RED, "> heuristicFunc!\n");
 	for (size_t i = 0; i < open.size(); i++) {
-		std::cout << open[i].x << "-" << open[i].y << "\n";
+		std::cout << "xy = "<< open[i].x << "-" << open[i].y;
+		std::cout << " h = " << open[i].h << "\n";
 	}
 }
 
 void PuzzleSolver::startAlgorithmAStar() {
 	std::cout << "start Algorithm!\n";
 	open.push_back(start);
+	std::cout << "xy = "<< start.x << "-" << start.y;
+	initOpen(0, start.x, start.y);
 	//open[0].h = count_replace;
 	//open[0].g = 0;
 	//int cur = 0;
@@ -89,7 +93,7 @@ void PuzzleSolver::startAlgorithmAStar() {
 }
 
 int	PuzzleSolver::h(int x, int y) {
-	if (x < puzzle.getSize() && y < puzzle.getSize()
+	if (x < puzzle.getSize() + 1 && y < puzzle.getSize() + 1
 	&& x > 0 && y > 0) {
 		std::vector< std::vector<int> >	&graph = puzzle.getGraph();
 		int num = graph[y][x];

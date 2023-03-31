@@ -18,7 +18,7 @@ class PuzzleSolver {
 		PuzzleSolver(Puzzle &puzzle);
 		~PuzzleSolver();
         void genSolvePuzzle();
-		void initOpen(int g, int x, int y, std::deque<s_Point> &open);
+		void initOpen(int g, int x, int y);
 		void startAlgorithmAStar();
 		int	h(int x, int y); //heuristicFunc
 
