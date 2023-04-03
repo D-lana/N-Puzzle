@@ -23,6 +23,7 @@ int main() {
 	if (puzzle.getStatus() == READY) {
 		PuzzleSolver pSolver(puzzle);
 		pSolver.genSolvePuzzle();
+		pSolver.initDistance();
 		auto begin = std::chrono::steady_clock::now();
 		//--------
 		pSolver.startAlgorithmAStar();
@@ -33,5 +34,5 @@ int main() {
 		std::cout << elapsed_ms.count() << " ms\n";
 		//pSolver.h(3, 1);
 	}
-	
+	puzzle.printPole();
 }

@@ -154,6 +154,12 @@ void	Puzzle::countNeedMove() {
 	std::cout << std::endl;
 }
 
+void Puzzle::swapPoint(int x, int y) {
+	std::swap(graph[y][x], graph[start_y][start_x]);
+	start_y = y;
+	start_x = x;
+}
+
 e_status Puzzle::getStatus() {
 	return(status);
 }
@@ -168,7 +174,9 @@ int Puzzle::getStartX() {
 int Puzzle::getStartY() {
 	return(start_y);
 }
-
+int Puzzle::getNum(int x, int y) {
+	return(graph[y][x]);
+}
 std::vector< std::vector<int> >	&Puzzle::getGraph() {
 	return(graph);
 }

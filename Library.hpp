@@ -81,8 +81,8 @@ struct s_Point {
 	int cost;
 	int g;
 	int h;
-	s_Point(int x, int y, int g, int h) : x(x), y(y), g(g), h(h) {
-	}
+	s_Point(int x, int y, int g, int h)
+	: x(x), y(y), g(g), h(h) {}
 };
 
 enum e_status

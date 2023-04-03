@@ -5,11 +5,11 @@
 
 class Puzzle {
 	private:
-		std::vector<int> checking;
+		std::vector<int> checking; //??
 		std::string file;
 		int size_puzzle;
 		std::vector< std::vector<int> > graph;
-		std::vector<int> puzzle_in_line;
+		std::vector<int> puzzle_in_line; //??
 		e_status status;
 		int start_x;
 		int start_y;
@@ -33,10 +33,11 @@ class Puzzle {
 		int			getSize();
 		int			getStartX();
 		int			getStartY();
+		int			getNum(int x, int y);
 		std::vector< std::vector<int> >	&getGraph();
 
 		void	countNeedMove();
-
+		void swapPoint(int x, int y);
 };
 
 #endif
