@@ -201,4 +201,3 @@ int PuzzleSolver::Manhattan() {
 	//--
 }
 
-
