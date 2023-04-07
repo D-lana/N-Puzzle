@@ -3,6 +3,7 @@
 #include <unordered_set>
 #include <limits.h>
 #include <vector>
+#include <deque>
 
 struct Puzz {
 	std::vector<std::vector<int>> graph;
@@ -10,6 +11,8 @@ struct Puzz {
 	int h;
 	int start_x;
 	int start_y;
+	int prev_x;
+	int prev_y;
 		bool operator==(const Puzz &other) const
 		{
 			for (short i = 0; i < graph.size(); i++) {
@@ -24,6 +27,9 @@ struct Puzz {
 
 std::vector< std::vector<int> > solve;
 std::unordered_map<int, int> dict;
+std::deque<Puzz> result;
+int count_in_time;
+int count_in_size;
 
 void genSolvePuzzle(int size_p) {
 	int side = size_p;
@@ -59,36 +65,19 @@ void genSolvePuzzle(int size_p) {
 		solve[size_p / 2 + 1][size_p / 2] = 0;
 	}
 	//----print
-	for (size_t i = 1; i < solve.size(); i++) {
-		for (size_t j = 1; j < solve[i].size(); j++) {
-			std::cout << solve[i][j] << " ";
-		}
-		std::cout << std::endl;
-	}
-	std::cout << std::endl;
+	// for (size_t i = 1; i < solve.size(); i++) {
+	// 	for (size_t j = 1; j < solve[i].size(); j++) {
+	// 		std::cout << solve[i][j] << " ";
+	// 	}
+	// 	std::cout << std::endl;
+	// }
+	// std::cout << std::endl;
 }
 
 std::ifstream cin("input.txt");
 int size_p;
 
 bool finish;
-
-int **table;
-
-int **initMassiv(int n, int m) {
-	int **table = (int**)malloc(n * sizeof(int*));
-	for (int i = 0; i < n; i++) {
-		table[i] = (int*)malloc(m * sizeof(int));
-	}
-	return (table);
-}
-
-void freeMassiv(int n, int **table) {
-	for (int i = 0; i < n; i++) {
-		free(table[i]);
-	}
-	free(table);
-}
 
 template<>
 struct std::hash<Puzz>
@@ -99,9 +88,10 @@ struct std::hash<Puzz>
 		for (size_t i = 0; i < s.graph.size(); i++) {
 			for (size_t j = 0; j < s.graph[i].size(); j++) {
 				hash += s.graph[i][j];
-				hash = hash * 10;
+				hash = hash << 4;
 			}
 		}
+		//std::cout << "hash = " << hash << std::endl;
 		return hash;
 	}
 };
@@ -111,7 +101,7 @@ std::unordered_set<Puzz> close;
 std::vector<Puzz> neighbours;
 std::vector<Puzz> n;
 
-Puzz min_f() {
+Puzz min_f(Puzz cur) {
 	int min = INT_MAX;
 	Puzz min_p;
 	for (auto it : open) {
@@ -120,6 +110,7 @@ Puzz min_f() {
 			min_p = it;
 		}
 	}
+	count_in_time++;
 	return(min_p);
 }
 
@@ -142,21 +133,32 @@ void addNeighbour(Puzz *puz, int x, int y) {
 	int s_x = puz->start_x;
 	int s_y = puz->start_y;
 	Puzz tmp = *puz;
+	Puzz puzz_min_g;
 	tmp.g++;
+	tmp.prev_x = s_x;
+	tmp.prev_y = s_y;
 	int num = 0;
 	if (x > 0 && y > 0 && x + 1 <= puz->graph.size() && y + 1 <= puz->graph.size()) {
-		std::cout << "addNeighbour > " << x << " " << y << "\n";
+		//std::cout << "addNeighbour > " << x << " " << y << "\n";
 		std::swap(tmp.graph[y][x], tmp.graph[s_y][s_x]);
 		num = tmp.graph[s_y][s_x];
 		tmp.h = tmp.h - h_Manhattan(num, x, y) + h_Manhattan(num, s_x, s_y);
-		std::cout << "for " << num << "= - " << h_Manhattan(num, x, y);
-		std::cout << " + " << h_Manhattan(num, s_x, s_y);
-		std::cout << ", h = " << tmp.h << std::endl;
+		//std::cout << "for " << num << "= - " << h_Manhattan(num, x, y);
+		//std::cout << " + " << h_Manhattan(num, s_x, s_y);
+		//std::cout << ", h = " << tmp.h << std::endl;
 		tmp.start_x = x;
 		tmp.start_y = y;
 		if (close.count(tmp) == 0) {
 			if (open.count(tmp) == 0) {
 				open.insert(tmp);
+			}
+			else {
+				puzz_min_g = *open.find(tmp);
+				if (puzz_min_g.g > tmp.g) {
+					open.erase(tmp);
+					open.insert(tmp);
+					//std::cout << "g change " << puzz_min_g.g << " to " << tmp.g << std::endl;
+				}
 			}
 			n.push_back(tmp);
 		}
@@ -200,7 +202,32 @@ int init_Manhattan(Puzz *cur) {
 	return(h);
 }
 
+void printResult(Puzz cur) {
+	result.push_front(cur);
+	std::string step = "Step: ";
+	for (size_t i = 0; i < result.size(); i++) {
+		print(BLUE, step + std::to_string(i + 1) + "\n\n");
+		printPole(&result[i]);
+	}
+	print(BLUE, "-------- STATISTICS --------\n\n");
+	print(GRAY, "Complexity in time: ");
+	print(GREEN, std::to_string(count_in_time) + "\n");
+	print(GRAY, "Complexity in size: ");
+	print(GREEN, std::to_string(count_in_size) + "\n");
+	print(GRAY, "Number of moves: ");
+	print(GREEN, std::to_string(result.size()) + "\n\n");
+}
+
+void complexityInSize() {
+	int new_size = close.size() + open.size();
+	if (count_in_size < new_size) {
+		count_in_size = new_size;
+	}
+}
+
 int main() { 
+	count_in_time = 0;
+	count_in_size = 0;
 	cin >> size_p;
 	int m = 0;
 	Puzz cur;
@@ -217,35 +244,47 @@ int main() {
 		}
 	}
 	finish = false;
+	cur.prev_x = 0;
+	cur.prev_y = 0;
 	cur.g = 0;
 	genSolvePuzzle(size_p);
 	cur.h = init_Manhattan(&cur);
-	std::cout << "h = " << cur.h << std::endl;
+	//std::cout << "h = " << cur.h << std::endl;
 	open.insert(cur);
-	printPole(&cur);
-	//getNeighbours(&cur);
+	//printPole(&cur);
 	// for (auto i : n) {
 	// 	print(RED, "Var h: ");
 	// 	std::cout << i.h << std::endl;
 	// 	printPole(i);
 	// }
-	int i = 0;
-	while (open.size() > 0 && finish == false && i < 300) {
-		cur = min_f();
+	while (open.size() > 0 && finish == false) {
+		cur = min_f(cur);
+		//std::cout << "h = " << cur.h;
+		//std::cout << ", g = " << cur.g << std::endl;
 		if (cur.h == 0) {
-			std::cout << "puzzle solved\n";
+			print(GREEN, "\n-------- PUZZLE SOLVED! --------\n\n");
+			finish == true;
 			break ;
 		}
 		close.insert(cur);
 		open.erase(cur);
+		complexityInSize();
 		getNeighbours(&cur);
-		for (auto i : n) {
-			print(RED, "Var h: ");
-			std::cout << i.h << std::endl;
-			printPole(&i);
-		}
-		i++;
 	}
+	int x = 0;
+	int y = 0;
+	while (cur.prev_x != 0) {
+		result.push_front(cur);
+		std::swap(cur.graph[cur.prev_y][cur.prev_x], cur.graph[cur.start_y][cur.start_x]);
+		if (close.find(cur) == close.end()) {
+			std::cout << "ERROR!" << std::endl;
+			return 0;
+		}
+		else {
+			cur = *close.find(cur);
+		}
+	}
+	printResult(cur);
 	// 1) Определите ОТКРЫТЫЙ список.
 	//Изначально OPEN состоит исключительно из одного узла, начального узла S.
 

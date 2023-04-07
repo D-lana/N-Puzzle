@@ -26,7 +26,7 @@ int main() {
 		pSolver.initDistance();
 		auto begin = std::chrono::steady_clock::now();
 		//--------
-		pSolver.startAlgorithmAStar();
+		//pSolver.startAlgorithmAStar();
 		//--------
 		auto end = std::chrono::steady_clock::now();
 		auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin);
