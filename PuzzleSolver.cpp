@@ -53,15 +53,31 @@ void PuzzleSolver::genSolvePuzzle(int size_p) {
 	}
 	if (size_p % 2 == 0) {
 		solve[size_p / 2 + 1][size_p / 2] = 0;
+		dict[0] = (size_p / 2 + 1) * 1000 + (size_p / 2);
 	}
+	else {
+		solve[size_p / 2 + 1][size_p / 2 + 1] = 0;
+		dict[0] = (size_p / 2 + 1) * 1000 + (size_p / 2 + 1);
+	}
+	//std::cout << "size = " << dict.size() << std::endl;
+	//std::cout << "null = " << size_p / 2 + 1 << " - " << size_p / 2  << std::endl;
+	set_x.resize(solve.size());
+	set_y.resize(solve.size());
+	for (size_t i = 1; i < solve.size(); ++i) {
+		for (size_t j = 1; j < solve[i].size(); ++j) {
+			set_x[i].insert(solve[i][j]);
+			set_y[j].insert(solve[i][j]);
+		}
+	}
+	printSolvePuzzle();
 }
 
 Puzzle PuzzleSolver::min_f() {
 	int min = INT_MAX;
 	Puzzle min_p;
 	for (auto it : open) {
-		if (it.h + it.g < min) {
-			min = it.h + it.g;
+		if (it.h + it.g + it.conflict < min) { //+ it.conflict
+			min = it.h + it.g + it.conflict; //+ it.conflict;
 			min_p = it;
 		}
 	}
@@ -90,6 +106,8 @@ void PuzzleSolver::addNeighbour(Puzzle *puz, int x, int y) {
 		std::swap(tmp.graph[y][x], tmp.graph[s_y][s_x]);
 		num = tmp.graph[s_y][s_x];
 		tmp.h = tmp.h - h_Manhattan(num, x, y) + h_Manhattan(num, s_x, s_y);
+		tmp.conflict = Manhattan_conflicts(&tmp);
+		//std::cout << "conflict = " << tmp.conflict << std::endl;
 		tmp.start_x = x;
 		tmp.start_y = y;
 		if (close.count(tmp) == 0) {
@@ -168,9 +186,49 @@ void PuzzleSolver::complexityInSize() {
 	}
 }
 
+
+/* Считаем манхетенское расстояние по дефолту
+Считаем количество линейных конфликтов и для каждого прибавляем +2
+Считаем угловые конфликты 
+---Считаем условие последней позиции (если 12 не находится в нижней строке
+---или если 15 находится не в последнем столбце) - для рядовой последовательности
+Bidirectional search - двунаправленный поиск от запутанного состояния до решения 
+и наоборот от решенного пазла к данному запутанному состоянию
+Beam search - отсекаем часть невыгодных вариантов - путь становится не кратчайшим, 
+но зато экономятся ресурсы памяти и времени
+*/
+int PuzzleSolver::Manhattan_conflicts(Puzzle *cur) {
+	int h = 0;
+	int prev_x = -1;
+	int prev_y = -1;
+	int size_p = cur->graph.size();
+	for (int i = 1; i < size_p; i++) {
+		for (int j = 1; j < size_p; j++) {
+			if (set_x[i].count(cur->graph[i][j]) != 0) {
+				if (prev_x != -1 && dict[prev_x] % 1000 > dict[cur->graph[i][j]] % 1000) {
+					h += 2;
+				}
+				prev_x = cur->graph[i][j];
+			}
+			if (set_y[i].count(cur->graph[j][i]) != 0) {
+				if (prev_y != -1 && dict[prev_y] / 1000 > dict[cur->graph[j][i]] / 1000) {
+					h += 2;
+				}
+				prev_y = cur->graph[j][i];
+			}
+		}
+		prev_x = -1;
+		prev_y = -1;
+	}
+	return(h);
+}
+
 void PuzzleSolver::runAlgorithm(Puzzle cur) {
 	cur.h = init_Manhattan(&cur);
-	//std::cout << "h = " << cur.h << std::endl;
+	cur.conflict = Manhattan_conflicts(&cur);
+	std::cout << "h = " << cur.h << std::endl;
+	std::cout << "conflict = " << cur.conflict << std::endl;
+	//return ;
 	//std::cout << "s x = " << cur.start_x << std::endl;
 	//std::cout << "s y = " << cur.start_y << std::endl;
 	printPole(&cur);
@@ -202,3 +260,15 @@ void PuzzleSolver::runAlgorithm(Puzzle cur) {
 	}
 	printResult(cur);
 }
+
+//Complexity in time: 586
+//Complexity in size: 954
+/*# This puzzle is solvable
+3
+6 3 7 
+5 0 8 
+1 2 4 
+Complexity in time: 775
+Complexity in size: 1205
+Number of moves: 25*/
+

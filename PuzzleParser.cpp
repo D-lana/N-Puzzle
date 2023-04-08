@@ -45,6 +45,9 @@ e_status PuzzleParser::readFile() {
 		}
 	}
 	if (i < size_puzzle + 1) status = FAIL;
+	if (status == FAIL) {
+		error(RED, 1);
+	}
 	return (status);
 }
 
@@ -101,7 +104,10 @@ e_status PuzzleParser::checkNum() {
 			checking.erase(graph[i][j]);
 		}
 	}
-	if (checking.size() != 0) return (FAIL);
+	if (checking.size() != 0) {
+		error(RED, 2);
+		return (FAIL);
+	} 
 	return (SUCCESS);
 }
 
@@ -118,19 +124,27 @@ e_status PuzzleParser::checkSolution() {
 	}
 	if (count_inversion == 0 
 	&& puzzle_in_line[std::pow(size_puzzle, 2) - 1] == 0) {
-		std::cerr << "Puzzle is already solved! Yahoo!\n";
+		print(GREEN, "\n-------- Puzzle is already solved! Yahoo! --------\n\n");
 		status = SUCCESS;
 	}
 	else if (size_puzzle % 2 != 0 && count_inversion % 2 != 0) {
-		print(RED, "\n-------- Puzzle is not solvable! --------\n\n");
+		print(RED, "\n-------- Puzzle is unsolvable! --------\n\n");
 		status = FAIL;
 	}
 	else if (size_puzzle % 2 == 0 && (start_x + count_inversion) % 2 == 0) {
-		print(RED, "\n-------- Puzzle is not solvable! --------\n\n");
+		print(RED, "\n-------- Puzzle is unsolvable! --------\n\n");
 		status = FAIL;
+		/*
+		# This puzzle is unsolvable
+		4
+		7  3  6  9 
+		1 11 14  2 
+		8  0  5 10 
+		12 15  4 13 
+		*/
 	}
-	//std::cout << "count_inversion = " << count_inversion << "\n";
-	//std::cout << "start = " << start_x << " " << start_y << "\n";
+	std::cout << "start line: " << start_x;
+	std::cout << " count_inversion: " << count_inversion << "\n";
 	if (status == READY) {
 		countNeedMove();
 	}
@@ -143,16 +157,11 @@ void	PuzzleParser::countNeedMove() {
 		checking.push_back(i);
 	}
 	checking.push_back(0);
-	//std::cout << "Need to replace: ";
 	for (size_t i = 0; i < puzzle_in_line.size(); i++) {
 		if (puzzle_in_line[i] != checking[i]) {
 			count_replace++;
-			//std::cout << puzzle_in_line[i] << "-" << checking[i] << "  ";
 		}
 	}
-	//std::cout << std::endl;
-	//std::cout << "Count_replace: " << count_replace << std::endl;
-	//std::cout << std::endl;
 }
 
 void PuzzleParser::swapPoint(int x, int y) {

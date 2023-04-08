@@ -7,6 +7,8 @@ class PuzzleSolver {
 	private:
 		Puzzle &puzzle;
 		std::vector< std::vector<int> > solve;
+		std::vector< std::set<int> > set_x;
+		std::vector< std::set<int> > set_y;
 		std::unordered_map<int, int> dict;
 		std::deque<Puzzle> result;
 		int count_in_time;
@@ -36,6 +38,8 @@ class PuzzleSolver {
 		void printResult(Puzzle cur);
 		void printPole(Puzzle *p);
 		void printSolvePuzzle();
+
+		int Manhattan_conflicts(Puzzle *cur);
 };
 
 #endif

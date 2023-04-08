@@ -12,6 +12,7 @@ class Puzzle {
 		int start_y;
 		int prev_x;
 		int prev_y;
+		int conflict;
 		bool operator==(const Puzzle &other) const
 		{
 			for (size_t i = 0; i < graph.size(); i++) {

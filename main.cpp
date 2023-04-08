@@ -5,18 +5,25 @@
 // h - стоимость оставшегося пути
 
 
-int main() {
+void parserArgv(int argc, char **argv) {
+	if (argc > 2) {	
+		std::string arg_1(argv[1]);
+		if (arg_1 == "-h") {
+			print(BLUE, "ADD heuristic");
+		}
+	}
+	else {
+		//error(RED, 1);
+	}
+}
+
+int main(int argc, char **argv) {
+	parserArgv(argc, argv);
 	PuzzleParser parser("input.txt");
-	if (parser.readFile() == FAIL) {
-		error(1);
-		return 0;
-	}
-	if (parser.checkNum() == FAIL) {
-		error(2);
-		return 0;
-	}
-	if (parser.checkSolution() == FAIL) {
-		return 0;
+	if (parser.readFile() == FAIL 
+	||	parser.checkNum() == FAIL
+	|| parser.checkSolution() == FAIL) {
+		return (-1);
 	}
 	parser.printPole();
 	parser.printInLine();

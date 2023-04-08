@@ -18,38 +18,6 @@
 
 #define PATH_TO_FILE "input.txt"
 
-// template<typename T>
-// std::string toString(const T& value)
-// {
-// 	std::ostringstream oss;
-// 	oss << value;
-// 	return oss.str();
-// }
-
-inline void error(int err)
-{
-	if (err == 1) {
-		std::cerr << "Error! Input data is impossible!" << std::endl;
-	}
-	if (err == 2) {
-		std::cerr << "Error! Incorrect numbers!" << std::endl;
-	}
-	if (err == 3) {
-		std::cerr << "Error! Puzzle is not solvable!" << std::endl;
-	}
-	if (err == 4) {
-		std::cerr << "Error! Heurictic error!" << std::endl;
-	}
-}
-
-inline int toNumber(std::string s)
-{
-	int value = 0;
-	std::stringstream ss(s);
-	ss >> value;
-	return value;
-}
-
 enum e_color
 {
 	RED = 91,
@@ -61,26 +29,43 @@ enum e_color
 	GRAY = 30
 };
 
-inline void print(e_color color, std::string str) 
-{
-	std::cout << "\x1b[1;" << color << "m";
-	std::cout << str << "\x1b[0m";
-}
-
-// inline int heuristicFunc(int g, int x, int y) 
-// {
-// 	int h = 0;
-// 	int f = g + h;
-// 	return (f);
-// }
-
-
 enum e_status
 {
 	READY,
 	SUCCESS,
 	FAIL
 };
+
+inline void error(e_color color, int err)
+{
+	std::cerr << "\x1b[1;" << color << "m";
+	if (err == 1) {
+		std::cerr << "Error! Input data is impossible!" << "\x1b[0m" << std::endl;
+	}
+	else if (err == 2) {
+		std::cerr << "Error! Incorrect numbers!" << "\x1b[0m" << std::endl;
+	}
+	else if (err == 3) {
+		std::cerr << "Error! Puzzle is not solvable!" << "\x1b[0m" << std::endl;
+	}
+	else if (err == 4) {
+		std::cerr << "Error! Heurictic error!" << "\x1b[0m" << std::endl;
+	}
+}
+
+inline int toNumber(std::string s)
+{
+	int value = 0;
+	std::stringstream ss(s);
+	ss >> value;
+	return value;
+}
+
+inline void print(e_color color, std::string str) 
+{
+	std::cout << "\x1b[1;" << color << "m";
+	std::cout << str << "\x1b[0m";
+}
 
 # include "Puzzle.hpp"
 template<>
