@@ -12,6 +12,9 @@
 # include <map>
 #include <stdlib.h> 
 #include <deque>
+#include <unordered_map>
+#include <unordered_set>
+#include <limits.h>
 
 #define PATH_TO_FILE "input.txt"
 
@@ -27,19 +30,15 @@ inline void error(int err)
 {
 	if (err == 1) {
 		std::cerr << "Error! Input data is impossible!" << std::endl;
-		exit(-1);
 	}
 	if (err == 2) {
 		std::cerr << "Error! Incorrect numbers!" << std::endl;
-		exit(-1);
 	}
 	if (err == 3) {
 		std::cerr << "Error! Puzzle is not solvable!" << std::endl;
-		exit(-1);
 	}
 	if (err == 4) {
 		std::cerr << "Error! Heurictic error!" << std::endl;
-		exit(-1);
 	}
 }
 
@@ -75,15 +74,6 @@ inline void print(e_color color, std::string str)
 // 	return (f);
 // }
 
-struct s_Point {
-	int x;
-	int y;
-	int cost;
-	int g;
-	int h;
-	s_Point(int x, int y, int g, int h)
-	: x(x), y(y), g(g), h(h) {}
-};
 
 enum e_status
 {
@@ -93,4 +83,20 @@ enum e_status
 };
 
 # include "Puzzle.hpp"
+template<>
+struct std::hash<Puzzle>
+{
+	std::size_t operator()(Puzzle const& s) const noexcept
+	{
+		long long hash = 0;
+		for (size_t i = 0; i < s.graph.size(); i++) {
+			for (size_t j = 0; j < s.graph[i].size(); j++) {
+				hash += s.graph[i][j];
+				hash = hash << 4;
+			}
+		}
+		return hash;
+	}
+};
 # include "PuzzleSolver.hpp"
+# include "PuzzleParser.hpp"

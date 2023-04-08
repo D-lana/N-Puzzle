@@ -7,28 +7,35 @@ class PuzzleSolver {
 	private:
 		Puzzle &puzzle;
 		std::vector< std::vector<int> > solve;
-		std::vector< std::vector<s_Point> > activ;
-		s_Point start;
-		std::map<int, int> dict;
-		std::map<int, int> dictance;
-		int manhattan_count;
+		std::unordered_map<int, int> dict;
+		std::deque<Puzzle> result;
+		int count_in_time;
+		int count_in_size;
 
-		std::deque<s_Point> open;
-		std::deque<s_Point> close;
+		int size_p;
+		bool finish;
+
+		std::unordered_set<Puzzle> open;
+		std::unordered_set<Puzzle> close;
+		std::vector<Puzzle> neighbours;
+		std::vector<Puzzle> n;
 
 	public:
 		PuzzleSolver(Puzzle &puzzle);
 		~PuzzleSolver();
-        void genSolvePuzzle();
-		void initOpen(int g, int x, int y);
-		void startAlgorithmAStar();
-		int	h(int num, int x, int y); //heuristicFunc
 
-		int findMinPoint();
-		int Manhattan();
-		void initDistance();
-		void updateAll(int min);
-		void cycle(int count, std::vector< std::vector<int> > graph);
+		void genSolvePuzzle(int size_p);
+		Puzzle min_f();
+		int h_Manhattan(int num, int x, int y);
+		void addNeighbour(Puzzle *puz, int x, int y);
+		void getNeighbours(Puzzle *puz);
+		int init_Manhattan(Puzzle *cur);
+		void complexityInSize();
+		void runAlgorithm(Puzzle cur);
+
+		void printResult(Puzzle cur);
+		void printPole(Puzzle *p);
+		void printSolvePuzzle();
 };
 
 #endif

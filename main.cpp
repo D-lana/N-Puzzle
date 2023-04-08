@@ -4,35 +4,26 @@
 // g - стоимость пройденного пути
 // h - стоимость оставшегося пути
 
+
 int main() {
-	Puzzle puzzle("input.txt");
-	if (puzzle.parser() == FAIL) {
-		puzzle.~Puzzle();
+	PuzzleParser parser("input.txt");
+	if (parser.readFile() == FAIL) {
 		error(1);
+		return 0;
 	}
-	if (puzzle.checkNum() == FAIL) {
-		puzzle.~Puzzle();
+	if (parser.checkNum() == FAIL) {
 		error(2);
+		return 0;
 	}
-	if (puzzle.checkSolution() == FAIL) {
-		puzzle.~Puzzle();
-		error(3);
+	if (parser.checkSolution() == FAIL) {
+		return 0;
 	}
-	puzzle.printPole();
-	puzzle.printInLine();
-	if (puzzle.getStatus() == READY) {
+	parser.printPole();
+	parser.printInLine();
+	if (parser.getStatus() == READY) {
+		Puzzle puzzle(parser.getGraph());
 		PuzzleSolver pSolver(puzzle);
-		pSolver.genSolvePuzzle();
-		pSolver.initDistance();
-		auto begin = std::chrono::steady_clock::now();
-		//--------
-		//pSolver.startAlgorithmAStar();
-		//--------
-		auto end = std::chrono::steady_clock::now();
-		auto elapsed_ms = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin);
-		print(BLUE, "The time: ");
-		std::cout << elapsed_ms.count() << " ms\n";
-		//pSolver.h(3, 1);
+		pSolver.genSolvePuzzle(parser.getSize());
+		pSolver.runAlgorithm(puzzle);
 	}
-	puzzle.printPole();
 }

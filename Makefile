@@ -2,6 +2,7 @@ NAME		= n_puzzle
 
 SRCS		= main.cpp \
 			Puzzle.cpp \
+			PuzzleParser.cpp \
 			PuzzleSolver.cpp \
 
 HEADERS		= Library.hpp 

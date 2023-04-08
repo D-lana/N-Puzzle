@@ -4,40 +4,27 @@
 #include "Library.hpp"
 
 class Puzzle {
-	private:
-		std::vector<int> checking; //??
-		std::string file;
-		int size_puzzle;
-		std::vector< std::vector<int> > graph;
-		std::vector<int> puzzle_in_line; //??
-		e_status status;
+	public:
+		std::vector<std::vector<int>> graph;
+		int g;
+		int h;
 		int start_x;
 		int start_y;
-
-		int count_replace;
-
-	public:
-		Puzzle(std::string _file);
+		int prev_x;
+		int prev_y;
+		bool operator==(const Puzzle &other) const
+		{
+			for (size_t i = 0; i < graph.size(); i++) {
+				for (size_t j = 0; j < graph[i].size(); j++) {
+					if (graph[i][j] != other.graph[i][j])
+						return(false);
+				}
+			}
+			return(true);
+		}
+		Puzzle(std::vector< std::vector<int> > _graph);
+		Puzzle();
 		~Puzzle();
-		e_status parser();
-		e_status checkSolution();
-		e_status checkNum();
-
-		void makeLine(std::string s, int i);
-		void puzzleToLine();
-
-		void printPole();
-		void printInLine();
-
-		e_status	getStatus();
-		int			getSize();
-		int			getStartX();
-		int			getStartY();
-		int			getNum(int x, int y);
-		std::vector< std::vector<int> >	&getGraph();
-
-		void	countNeedMove();
-		void swapPoint(int x, int y);
 };
 
 #endif
