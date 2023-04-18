@@ -30,10 +30,10 @@ class PuzzleSolver {
 
 		void genSolvePuzzle(int size_p);
 		Puzzle min_f();
-		int h_Manhattan(int num, int x, int y);
+		
 		void addNeighbour(Puzzle *puz, int x, int y);
 		void getNeighbours(Puzzle *puz);
-		int init_Manhattan(Puzzle *cur);
+		
 		void complexityInSize();
 		void runAlgorithm(Puzzle cur);
 
@@ -41,8 +41,13 @@ class PuzzleSolver {
 		void printPole(Puzzle *p);
 		void printSolvePuzzle();
 
+		int init_Manhattan(Puzzle *cur);
+		int h_Manhattan(int num, int x, int y);
 		int Manhattan_conflicts(Puzzle *cur);
 		int Manhattan_conflicts_corner(Puzzle *cur);
+
+		int h_Euclidean(int num, int x, int y);
+		int Euclidean_metric(Puzzle *cur);
 };
 
 #endif
