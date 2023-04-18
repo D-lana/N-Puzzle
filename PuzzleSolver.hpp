@@ -18,7 +18,9 @@ class PuzzleSolver {
 		bool finish;
 
 		std::unordered_set<Puzzle> open;
+		std::map<int, std::unordered_set<Puzzle>> open_map;
 		std::unordered_set<Puzzle> close;
+		std::map<int, std::unordered_set<Puzzle>> close_map;
 		std::vector<Puzzle> neighbours;
 		std::vector<Puzzle> n;
 

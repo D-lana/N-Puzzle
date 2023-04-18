@@ -73,16 +73,25 @@ void PuzzleSolver::genSolvePuzzle(int size_p) {
 }
 
 Puzzle PuzzleSolver::min_f() {
-	int min = INT_MAX;
-	Puzzle min_p;
-	for (auto it : open) {
-		if (it.h + it.g + it.conflict < min) { //+ it.conflict
-			min = it.h + it.g + it.conflict; //+ it.conflict;
-			min_p = it;
+	//int min = INT_MAX;
+	while (open_map.begin()->second.size() == 0) { ///if while!!!!!
+		open_map.erase(open_map.begin()->first);
+		if (open_map.size() == 0) {
+			std::cout << "ERROR!" << std::endl;
+			exit(-1);
 		}
+		std::cout << "if while in min_f!!!!!\n";
 	}
-	print(YELLOW, "size of open:");
-	std::cout << open.size() << "\n";
+	Puzzle min_p = *open_map.begin()->second.begin();
+	std::cout << "Size: " << open_map.begin()->second.size() << "\n";
+	// for (auto it : open) {
+	// 	if (it.h + it.g + it.conflict < min) { //+ it.conflict
+	// 		min = it.h + it.g + it.conflict; //+ it.conflict;
+	// 		min_p = it;
+	// 	}
+	// }
+	//print(YELLOW, "size of open:");
+	//std::cout << open.size() << "\n";
 	count_in_time++;
 	return(min_p);
 }
@@ -104,6 +113,7 @@ void PuzzleSolver::addNeighbour(Puzzle *puz, int x, int y) {
 	tmp.prev_y = s_y;
 	int num = 0;
 	int size_p = puz->graph.size();
+	int h_map = 0;
 	if (x > 0 && y > 0 && x + 1 <= size_p && y + 1 <= size_p) {
 		std::swap(tmp.graph[y][x], tmp.graph[s_y][s_x]);
 		num = tmp.graph[s_y][s_x];
@@ -112,18 +122,20 @@ void PuzzleSolver::addNeighbour(Puzzle *puz, int x, int y) {
 		//std::cout << "conflict = " << tmp.conflict << std::endl;
 		tmp.start_x = x;
 		tmp.start_y = y;
+		h_map = tmp.h + tmp.g + tmp.conflict;
 		if (close.count(tmp) == 0) {
-			if (open.count(tmp) == 0) {
-				open.insert(tmp);
+			if (open_map[h_map].count(tmp) == 0) {
+				//open.insert(tmp);
+				open_map[h_map].insert(tmp);
 			}
 			else {
-				puzz_min_g = *open.find(tmp);
+				puzz_min_g = *open_map[h_map].find(tmp);
 				if (puzz_min_g.g > tmp.g) {
-					open.erase(tmp);
-					open.insert(tmp);
+					open_map[h_map].erase(tmp);
+					open_map[h_map].insert(tmp);
 				}
 			}
-			n.push_back(tmp);
+			//n.push_back(tmp);
 		}
 	}
 }
@@ -131,7 +143,7 @@ void PuzzleSolver::addNeighbour(Puzzle *puz, int x, int y) {
 void PuzzleSolver::getNeighbours(Puzzle *puz) {
 	int x = puz->start_x;
 	int y = puz->start_y;
-	n.clear();
+	//n.clear();
 	addNeighbour(puz, x - 1, y);
 	addNeighbour(puz, x, y - 1);
 	addNeighbour(puz, x + 1, y);
@@ -182,7 +194,7 @@ void PuzzleSolver::printResult(Puzzle cur) {
 }
 
 void PuzzleSolver::complexityInSize() {
-	int new_size = close.size() + open.size();
+	int new_size = close.size();/// + open.size(); ADD open!!!!!!!!!!!!!!!!!
 	if (count_in_size < new_size) {
 		count_in_size = new_size;
 	}
@@ -259,14 +271,18 @@ void PuzzleSolver::runAlgorithm(Puzzle cur) {
 	cur.conflict = Manhattan_conflicts(&cur);
 	std::cout << "h = " << cur.h << std::endl;
 	std::cout << "conflict = " << cur.conflict << std::endl;
-	//return ;
 	//std::cout << "s x = " << cur.start_x << std::endl;
 	//std::cout << "s y = " << cur.start_y << std::endl;
 	printPole(&cur);
 	open.insert(cur);
+	int h_map = cur.h + cur.g + cur.conflict;
+	open_map[h_map] = open;
+	print(RED, "SEGA\n");
 	finish = false;
-	while (open.size() > 0 && finish == false) {
+	while (finish == false) {
 		cur = min_f();
+		print(RED, "SEGA 2\n");
+		h_map = cur.h + cur.g + cur.conflict;
 		//std::cout << "h = " << cur.h << std::endl;
 		if (cur.h == 0) {
 			print(GREEN, "\n-------- PUZZLE SOLVED! --------\n\n");
@@ -274,7 +290,9 @@ void PuzzleSolver::runAlgorithm(Puzzle cur) {
 			break ;
 		}
 		close.insert(cur);
-		open.erase(cur);
+		print(RED, "SEGA 3\n");
+		open_map[h_map].erase(cur);
+		//open.erase(cur);
 		complexityInSize();
 		getNeighbours(&cur);
 	}
@@ -302,4 +320,3 @@ void PuzzleSolver::runAlgorithm(Puzzle cur) {
 Complexity in time: 775
 Complexity in size: 1205
 Number of moves: 25*/
-
