@@ -81,6 +81,8 @@ Puzzle PuzzleSolver::min_f() {
 			min_p = it;
 		}
 	}
+	print(YELLOW, "size of open:");
+	std::cout << open.size() << "\n";
 	count_in_time++;
 	return(min_p);
 }
@@ -197,6 +199,34 @@ Bidirectional search - двунаправленный поиск от запут
 Beam search - отсекаем часть невыгодных вариантов - путь становится не кратчайшим, 
 но зато экономятся ресурсы памяти и времени
 */
+
+int PuzzleSolver::Manhattan_conflicts_corner(Puzzle *cur) {
+	int h = 0;
+	int size_p = cur->graph.size() - 1;
+	int prev = size_p - 1;
+	if ((cur->graph[1][2] == solve[1][2] 
+	|| cur->graph[2][1] == solve[2][1])
+	&& cur->graph[1][1] != solve[1][1]) {
+		h += 2;
+	}
+	if ((cur->graph[2][size_p] == solve[2][size_p] 
+	|| cur->graph[1][prev] == solve[1][prev])
+	 && cur->graph[1][size_p] != solve[1][size_p]) {
+		h += 2;
+	}
+	if ((cur->graph[size_p][2] == solve[size_p][2] 
+	|| cur->graph[prev][1] == solve[prev][1])
+	 && cur->graph[size_p][1] != solve[size_p][1]) {
+		h += 2;
+	}
+	if ((cur->graph[size_p][prev] == solve[size_p][prev]
+	|| cur->graph[prev][size_p] == solve[prev][size_p])
+	 && cur->graph[size_p][size_p] != solve[size_p][size_p]) {
+		h += 2;
+	}
+	return(h);
+}
+
 int PuzzleSolver::Manhattan_conflicts(Puzzle *cur) {
 	int h = 0;
 	int prev_x = -1;
@@ -220,6 +250,7 @@ int PuzzleSolver::Manhattan_conflicts(Puzzle *cur) {
 		prev_x = -1;
 		prev_y = -1;
 	}
+	h += Manhattan_conflicts_corner(cur);
 	return(h);
 }
 

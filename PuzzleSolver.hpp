@@ -40,6 +40,7 @@ class PuzzleSolver {
 		void printSolvePuzzle();
 
 		int Manhattan_conflicts(Puzzle *cur);
+		int Manhattan_conflicts_corner(Puzzle *cur);
 };
 
 #endif
