@@ -6,29 +6,25 @@
 class PuzzleSolver {
 	private:
 		Puzzle &puzzle;
-		std::vector< std::vector<int> > solve;
-		std::vector< std::set<int> > set_x;
-		std::vector< std::set<int> > set_y;
-		std::unordered_map<int, int> dict;
+		Heuristics &h;
 		std::deque<Puzzle> result;
 		int count_in_time;
 		int count_in_size;
+		int open_size;
 
 		int size_p;
 		bool finish;
 
+		e_bonus flag;
+
 		std::unordered_set<Puzzle> open;
 		std::map<int, std::unordered_set<Puzzle>> open_map;
 		std::unordered_set<Puzzle> close;
-		std::map<int, std::unordered_set<Puzzle>> close_map;
-		std::vector<Puzzle> neighbours;
-		std::vector<Puzzle> n;
 
 	public:
-		PuzzleSolver(Puzzle &puzzle);
+		PuzzleSolver(Puzzle &puzzle, Heuristics &h, e_bonus flag);
 		~PuzzleSolver();
 
-		void genSolvePuzzle(int size_p);
 		Puzzle min_f();
 		
 		void addNeighbour(Puzzle *puz, int x, int y);
@@ -39,15 +35,6 @@ class PuzzleSolver {
 
 		void printResult(Puzzle cur);
 		void printPole(Puzzle *p);
-		void printSolvePuzzle();
-
-		int init_Manhattan(Puzzle *cur);
-		int h_Manhattan(int num, int x, int y);
-		int Manhattan_conflicts(Puzzle *cur);
-		int Manhattan_conflicts_corner(Puzzle *cur);
-
-		int h_Euclidean(int num, int x, int y);
-		int Euclidean_metric(Puzzle *cur);
 };
 
 #endif

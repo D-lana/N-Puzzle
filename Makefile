@@ -4,6 +4,10 @@ SRCS		= main.cpp \
 			Puzzle.cpp \
 			PuzzleParser.cpp \
 			PuzzleSolver.cpp \
+			Heuristics.cpp \
+			Manhattan.cpp \
+			Euclidean.cpp \
+			CountMismatch.cpp \
 
 HEADERS		= Library.hpp 
 

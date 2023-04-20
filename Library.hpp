@@ -36,6 +36,13 @@ enum e_status
 	FAIL
 };
 
+enum e_bonus
+{
+	UNIFORM_COST_SEARCH,
+	GREEDY_SEARCH,
+	NO_BONUS
+};
+
 inline void error(e_color color, int err)
 {
 	std::cerr << "\x1b[1;" << color << "m";
@@ -83,5 +90,10 @@ struct std::hash<Puzzle>
 		return hash;
 	}
 };
+
+# include "Heuristics.hpp"
+# include "Manhattan.hpp"
+# include "Euclidean.hpp"
+# include "CountMismatch.hpp"
 # include "PuzzleSolver.hpp"
 # include "PuzzleParser.hpp"

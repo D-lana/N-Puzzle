@@ -4,11 +4,9 @@ PuzzleParser::PuzzleParser(std::string _file) {
 	this->file = _file;
 	status = READY;
 	count_replace = 0;
-	//std::cout << "Constructor PuzzleParser call" << std::endl;
 }
 
 PuzzleParser::~PuzzleParser() {
-	//std::cout << "Destructor PuzzleParser call" << std::endl;
 }
 
 void PuzzleParser::makeLine(std::string s, int i) {
@@ -35,7 +33,7 @@ e_status PuzzleParser::readFile() {
 		if (line[0] != '#') {
 			if (i == 0) {
 				size_puzzle = toNumber(line);
-				if (size_puzzle == 0 || size_puzzle > 10) status = FAIL;
+				if (size_puzzle < 3 || size_puzzle > 10) status = FAIL;
 				graph.resize(size_puzzle + 1);
 			}
 			else {
@@ -89,9 +87,7 @@ void PuzzleParser::puzzleToLine() {
 	}
 	if (size_puzzle % 2 != 0) {
 		puzzle_in_line.push_back(graph[size_puzzle / 2 + 1][size_puzzle / 2 + 1]);
-		// проверить!!! возможно нужно graph[size_puzzle / 2 + 1][size_puzzle / 2]
 	}
-	printInLine();
 }
 
 e_status PuzzleParser::checkNum() {
@@ -124,12 +120,8 @@ e_status PuzzleParser::checkSolution() {
 			}
 		}
 		count_inversion += row;
-		// std::cout << "for " << puzzle_in_line[i] << " = " << row << "\n";
 		row = 0;
 	}
-	std::cout << "start line x: " << start_x << "\n";
-	std::cout << "start line y: " << start_y << "\n";
-	std::cout << "count_inversion: " << count_inversion << "\n";
 	if (count_inversion == 0 
 	&& puzzle_in_line[std::pow(size_puzzle, 2) - 1] == 0) {
 		print(GREEN, "\n-------- Puzzle is already solved! Yahoo! --------\n\n");
@@ -142,14 +134,6 @@ e_status PuzzleParser::checkSolution() {
 	else if (size_puzzle % 2 == 0 && (start_x + start_y + count_inversion) % 2 == 0) {
 		print(RED, "\n-------- Puzzle is unsolvable! --------\n\n");
 		status = FAIL;
-		/*
-		# This puzzle is unsolvable
-		4
-		7  3  6  9 
-		1 11 14  2 
-		8  0  5 10 
-		12 15  4 13 
-		*/
 	}
 	if (status == READY) {
 		countNeedMove();
