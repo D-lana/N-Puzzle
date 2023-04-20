@@ -1,6 +1,8 @@
 #include "Library.hpp"
 
-CountMismatch::CountMismatch(int size_p) : Heuristics(size_p) {}
+CountMismatch::CountMismatch(int size_p) : Heuristics(size_p) {
+	type = 3;
+}
 
 int CountMismatch::h(int num, int x, int y) {
 	int x2 = dict[num] % 1000;

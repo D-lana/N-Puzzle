@@ -2,6 +2,7 @@
 
 Heuristics::Heuristics(int size_p) {
 	genSolvePuzzle(size_p);
+	type = 0;
 };
 
 int Heuristics::conflicts_line(Puzzle *cur) {
@@ -114,4 +115,8 @@ void Heuristics::printSolvePuzzle() {
 		std::cout << std::endl;
 	}
 	std::cout << std::endl;
+}
+
+int Heuristics::getType() {
+	return(type);
 }

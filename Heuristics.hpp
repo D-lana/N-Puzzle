@@ -9,6 +9,7 @@ class Heuristics {
 		std::vector< std::set<int> > set_x;
 		std::vector< std::set<int> > set_y;
 		std::vector< std::vector<int> > solve;
+		int type;
 	public:
 		Heuristics(int size_p);
 		virtual ~Heuristics() {};
@@ -20,6 +21,7 @@ class Heuristics {
 		int conflicts_corner(Puzzle *cur);
 		void genSolvePuzzle(int size_p);
 		void printSolvePuzzle();
+		int getType();
 };
 
 #endif

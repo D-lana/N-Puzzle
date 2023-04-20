@@ -28,4 +28,20 @@ class Puzzle {
 		~Puzzle();
 };
 
+template<>
+struct std::hash<Puzzle>
+{
+	std::size_t operator()(Puzzle const& s) const noexcept
+	{
+		long long hash = 0;
+		for (size_t i = 0; i < s.graph.size(); i++) {
+			for (size_t j = 0; j < s.graph[i].size(); j++) {
+				hash += s.graph[i][j];
+				hash = hash << 4;
+			}
+		}
+		return hash;
+	}
+};
+
 #endif

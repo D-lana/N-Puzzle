@@ -10,8 +10,9 @@ PuzzleParser::~PuzzleParser() {
 }
 
 void PuzzleParser::makeLine(std::string s, int i) {
-	int value = 0;
-	std::stringstream ss(s);
+	int					value = 0;
+	std::stringstream	ss(s);
+
 	if (i > size_puzzle) status = FAIL;
 	graph[i].push_back(0);
 	for (int j = 1; j < size_puzzle + 1; j++) {
@@ -25,9 +26,10 @@ void PuzzleParser::makeLine(std::string s, int i) {
 }
 
 e_status PuzzleParser::readFile() {
-	std::ifstream cin(file.c_str());
-	std::string line;
-	int i = 0;
+	std::ifstream	cin(file.c_str());
+	std::string		line;
+	int				i = 0;
+
 	size_puzzle = 0;
 	while (getline(cin, line) && status != FAIL) {
 		if (line[0] != '#') {
@@ -67,8 +69,8 @@ void PuzzleParser::printInLine() {
 }
 
 void PuzzleParser::puzzleToLine() {
-	int side = size_puzzle;
-	int c = 1;
+	int	side = size_puzzle;
+	int	c = 1;
 	while (side > 2) {
 		for (int j = c; j < side; j++) {
 			puzzle_in_line.push_back(graph[c][j]);
@@ -91,8 +93,8 @@ void PuzzleParser::puzzleToLine() {
 }
 
 e_status PuzzleParser::checkNum() {
-	std::set<int> checking;
-	int check_size = std::pow(size_puzzle, 2);
+	std::set<int>	checking;
+	int				check_size = std::pow(size_puzzle, 2);
 	for (int i = 0; i < check_size; i++) {
 		checking.insert(i);
 	}
@@ -110,9 +112,11 @@ e_status PuzzleParser::checkNum() {
 
 e_status PuzzleParser::checkSolution() {
 	puzzleToLine();
-	int	count_inversion = 0;
-	int row = 0;
-	size_t len = puzzle_in_line.size();
+	
+	int		count_inversion = 0;
+	int		row = 0;
+	size_t	len = puzzle_in_line.size();
+
 	for (size_t i = 0; i < len; i++) {
 		for (size_t j = i + 1; j < len; j++) {
 			if (puzzle_in_line[i] > puzzle_in_line[j] && puzzle_in_line[j] != 0) {
@@ -142,7 +146,8 @@ e_status PuzzleParser::checkSolution() {
 }
 
 void	PuzzleParser::countNeedMove() {
-	int check_size = std::pow(size_puzzle, 2);
+	std::vector<int> checking;
+	int	check_size = std::pow(size_puzzle, 2);
 	for (int i = 1; i < check_size; i++) {
 		checking.push_back(i);
 	}
@@ -171,12 +176,15 @@ int PuzzleParser::getSize() {
 int PuzzleParser::getStartX() {
 	return(start_x);
 }
+
 int PuzzleParser::getStartY() {
 	return(start_y);
 }
+
 int PuzzleParser::getNum(int x, int y) {
 	return(graph[y][x]);
 }
+
 std::vector< std::vector<int> >	&PuzzleParser::getGraph() {
 	return(graph);
 }

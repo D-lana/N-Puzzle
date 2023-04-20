@@ -3,6 +3,9 @@
 
 // g - стоимость пройденного пути
 // h - стоимость оставшегося пути
+// В бонусах:
+// - h(x) = 0  - это Uniform cost search
+// - g(x) = 0 - это Greedy search
 
 Heuristics &getHeuristics(int argc, char **argv, int size_p) {
 	if (argc > 2) {	
@@ -46,16 +49,9 @@ e_bonus getBonusFlag(int argc, char **argv) {
 }
 
 int main(int argc, char **argv) {
-	std::string file = "";
+	std::string	file = "";
 	if (argc < 2) {
-		print(YELLOW, "Please, enter the following arguments:\n");
-		print(YELLOW, "necessary arg:\n");
-		print(GRAY, "path to the file (input.txt)\n");
-		print(YELLOW, "options:\n");
-		print(GRAY, "-h=m Manhattan\n-h=e Euclidean\n-h=c Count Mismatch\n");
-		print(GRAY, "-g=0 Greedy search\n-h=0 Uniform cost search\n");
-		print(GRAY, "Example no bonus: ./n_puzzle input.txt -h=m\n");
-		print(GRAY, "Example bonus: ./n_puzzle input.txt -h=m -g=0\n");
+		printHelp();
 		return (0);
 	}
 	else {
@@ -67,14 +63,13 @@ int main(int argc, char **argv) {
 	|| parser.checkSolution() == FAIL) {
 		return (-1);
 	}
-
-	int size_p = parser.getSize();
-	Heuristics &h = getHeuristics(argc, argv, size_p);
-	e_bonus flag = getBonusFlag(argc, argv);
 	if (parser.getStatus() == READY) {
+		int size_p = parser.getSize();
+		Heuristics &h = getHeuristics(argc, argv, size_p);
+		e_bonus flag = getBonusFlag(argc, argv);
 		Puzzle puzzle(parser.getGraph());
 		PuzzleSolver pSolver(puzzle, h, flag);
 		pSolver.runAlgorithm(puzzle);
+		delete &h;
 	}
-	delete &h;
 }

@@ -15,13 +15,10 @@ Puzzle::Puzzle(std::vector< std::vector<int> > _graph) {
 			}
 		}
 	}
-	//std::cout << "Constructor Puzzle call" << std::endl;
 }
 
 Puzzle::Puzzle() {
-	//std::cout << "Constructor Puzzle call" << std::endl;
 }
 
 Puzzle::~Puzzle() {
-	//std::cout << "Destructor Puzzle call"<< std::endl;
 }

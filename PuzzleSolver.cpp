@@ -5,6 +5,7 @@ PuzzleSolver::PuzzleSolver(Puzzle &_puzzle, Heuristics &_h, e_bonus _flag)
 	count_in_time = 0;
 	count_in_size = 0;
 	open_size = 1;
+	k = 1;
 }
 
 PuzzleSolver::~PuzzleSolver() {
@@ -28,7 +29,9 @@ void PuzzleSolver::addNeighbour(Puzzle *puz, int x, int y) {
 	int s_y = puz->start_y;
 	Puzzle tmp = *puz;
 	Puzzle puzz_min_g;
-	tmp.g++;
+	if (flag != GREEDY_SEARCH) {
+		tmp.g++;
+	}
 	tmp.prev_x = s_x;
 	tmp.prev_y = s_y;
 	int num = 0;
@@ -41,7 +44,10 @@ void PuzzleSolver::addNeighbour(Puzzle *puz, int x, int y) {
 		tmp.conflict = h.conflicts_line(&tmp);
 		tmp.start_x = x;
 		tmp.start_y = y;
-		h_map = tmp.h + tmp.g + tmp.conflict;
+		h_map = tmp.h + (tmp.g * k) + (tmp.conflict * k);
+		if (flag == UNIFORM_COST_SEARCH) {
+			h_map = (tmp.g * k);
+		}
 		if (close.count(tmp) == 0) {
 			if (open_map[h_map].count(tmp) == 0) {
 				open_map[h_map].insert(tmp);
@@ -67,15 +73,48 @@ void PuzzleSolver::getNeighbours(Puzzle *puz) {
 	addNeighbour(puz, x, y + 1);
 }
 
-void PuzzleSolver::printPole(Puzzle *p) {
-	std::cout << std::endl;
-	for (size_t i = 1; i < p->graph.size(); i++) {
-		for (size_t j = 1; j < p->graph[i].size(); j++) {
-			std::cout << p->graph[i][j] << " ";
-		}
-		std::cout << std::endl;
+void PuzzleSolver::runAlgorithm(Puzzle cur) {
+	if (h.getType() == 2) {
+		k = 10;
 	}
-	std::cout << std::endl;
+	cur.h = h.init(&cur);
+	cur.conflict = h.conflicts_line(&cur);
+	printPole(&cur);
+	open.insert(cur);
+	int h_map = cur.h + (cur.g * k) + (cur.conflict * k);
+	if (flag == UNIFORM_COST_SEARCH) {
+		h_map = cur.g;
+	}
+	open_map[h_map] = open;
+	finish = false;
+	while (finish == false) {
+		cur = min_f();
+		h_map = cur.h + (cur.g * k) + (cur.conflict * k);
+		if (flag == UNIFORM_COST_SEARCH) {
+			h_map = (cur.g * k);
+		}
+		if (cur.h == 0) {
+			print(GREEN, "-------- PUZZLE SOLVED! --------\n\n");
+			finish = true;
+			break ;
+		}
+		close.insert(cur);
+		open_map[h_map].erase(cur);
+		complexityInSize();
+		getNeighbours(&cur);
+	}
+	while (cur.prev_x != 0) {
+		result.push_front(cur);
+		std::swap(cur.graph[cur.prev_y][cur.prev_x], cur.graph[cur.start_y][cur.start_x]);
+		if (close.find(cur) == close.end()) {
+			std::cout << "ERROR!" << std::endl;
+			exit(-1);
+		}
+		else {
+			cur = *close.find(cur);
+		}
+	}
+	printResult(cur);
 }
 
 void PuzzleSolver::printResult(Puzzle cur) {
@@ -102,49 +141,13 @@ void PuzzleSolver::complexityInSize() {
 	}
 }
 
-/* Считаем манхетенское расстояние по дефолту
-Считаем количество линейных конфликтов и для каждого прибавляем +2
-Считаем угловые конфликты 
----Считаем условие последней позиции (если 12 не находится в нижней строке
----или если 15 находится не в последнем столбце) - для рядовой последовательности
-Bidirectional search - двунаправленный поиск от запутанного состояния до решения 
-и наоборот от решенного пазла к данному запутанному состоянию
-Beam search - отсекаем часть невыгодных вариантов - путь становится не кратчайшим, 
-но зато экономятся ресурсы памяти и времени
-*/
-
-void PuzzleSolver::runAlgorithm(Puzzle cur) {
-	cur.h = h.init(&cur);
-
-	cur.conflict = h.conflicts_line(&cur);
-	printPole(&cur);
-	open.insert(cur);
-	int h_map = cur.h + cur.g + cur.conflict;
-	open_map[h_map] = open;
-	finish = false;
-	while (finish == false) {
-		cur = min_f();
-		h_map = cur.h + cur.g + cur.conflict;
-		if (cur.h == 0) {
-			print(GREEN, "-------- PUZZLE SOLVED! --------\n\n");
-			finish = true;
-			break ;
+void PuzzleSolver::printPole(Puzzle *p) {
+	std::cout << std::endl;
+	for (size_t i = 1; i < p->graph.size(); i++) {
+		for (size_t j = 1; j < p->graph[i].size(); j++) {
+			std::cout << p->graph[i][j] << " ";
 		}
-		close.insert(cur);
-		open_map[h_map].erase(cur);
-		complexityInSize();
-		getNeighbours(&cur);
+		std::cout << std::endl;
 	}
-	while (cur.prev_x != 0) {
-		result.push_front(cur);
-		std::swap(cur.graph[cur.prev_y][cur.prev_x], cur.graph[cur.start_y][cur.start_x]);
-		if (close.find(cur) == close.end()) {
-			std::cout << "ERROR!" << std::endl;
-			return ;
-		}
-		else {
-			cur = *close.find(cur);
-		}
-	}
-	printResult(cur);
+	std::cout << std::endl;
 }

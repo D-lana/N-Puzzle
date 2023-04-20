@@ -2,19 +2,18 @@
 
 #include <iostream>
 #include <fstream>
-#include <vector>
 #include <string>
-# include <sstream>
-# include <fstream>
-# include <algorithm>
-# include <cmath>
-# include <set>
-# include <map>
-#include <stdlib.h> 
+#include <sstream>
+#include <algorithm>
+#include <cmath>
+#include <vector>
+#include <set>
+#include <map>
 #include <deque>
 #include <unordered_map>
 #include <unordered_set>
 #include <limits.h>
+#include <stdlib.h> 
 
 #define PATH_TO_FILE "input.txt"
 
@@ -74,23 +73,18 @@ inline void print(e_color color, std::string str)
 	std::cout << str << "\x1b[0m";
 }
 
-# include "Puzzle.hpp"
-template<>
-struct std::hash<Puzzle>
-{
-	std::size_t operator()(Puzzle const& s) const noexcept
-	{
-		long long hash = 0;
-		for (size_t i = 0; i < s.graph.size(); i++) {
-			for (size_t j = 0; j < s.graph[i].size(); j++) {
-				hash += s.graph[i][j];
-				hash = hash << 4;
-			}
-		}
-		return hash;
-	}
-};
+inline void printHelp() {
+	print(YELLOW, "Please, enter the following arguments:\n");
+	print(YELLOW, "necessary arg:\n");
+	print(GRAY, "path to the file (input.txt)\n");
+	print(YELLOW, "options:\n");
+	print(GRAY, "-h=m Manhattan\n-h=e Euclidean\n-h=c Count Mismatch\n");
+	print(GRAY, "-g=0 Greedy search\n-h=0 Uniform cost search\n");
+	print(GRAY, "Example no bonus: ./n_puzzle input.txt -h=m\n");
+	print(GRAY, "Example bonus: ./n_puzzle input.txt -h=m -g=0\n");
+}
 
+# include "Puzzle.hpp"
 # include "Heuristics.hpp"
 # include "Manhattan.hpp"
 # include "Euclidean.hpp"
