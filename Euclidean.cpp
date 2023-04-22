@@ -2,6 +2,7 @@
 
 Euclidean::Euclidean(int size_p) : Heuristics(size_p) {
 	type = 2;
+	k = 14;
 }
 
 int Euclidean::h(int num, int x, int y) {

@@ -2,6 +2,7 @@
 
 Manhattan::Manhattan(int size_p) : Heuristics(size_p) {
 	type = 1;
+	k = 2;
 }
 
 int Manhattan::h(int num, int x, int y) {

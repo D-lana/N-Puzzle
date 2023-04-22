@@ -2,6 +2,7 @@
 
 CountMismatch::CountMismatch(int size_p) : Heuristics(size_p) {
 	type = 3;
+	k = 2;
 }
 
 int CountMismatch::h(int num, int x, int y) {

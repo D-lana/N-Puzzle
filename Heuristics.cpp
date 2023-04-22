@@ -3,6 +3,7 @@
 Heuristics::Heuristics(int size_p) {
 	genSolvePuzzle(size_p);
 	type = 0;
+	k = 2;
 };
 
 int Heuristics::conflicts_line(Puzzle *cur) {
@@ -14,13 +15,13 @@ int Heuristics::conflicts_line(Puzzle *cur) {
 		for (int j = 1; j < size_p; j++) {
 			if (set_x[i].count(cur->graph[i][j]) != 0) {
 				if (prev_x != -1 && dict[prev_x] % 1000 > dict[cur->graph[i][j]] % 1000) {
-					h += 2;
+					h += k;
 				}
 				prev_x = cur->graph[i][j];
 			}
 			if (set_y[i].count(cur->graph[j][i]) != 0) {
 				if (prev_y != -1 && dict[prev_y] / 1000 > dict[cur->graph[j][i]] / 1000) {
-					h += 2;
+					h += k;
 				}
 				prev_y = cur->graph[j][i];
 			}
@@ -39,22 +40,22 @@ int Heuristics::conflicts_corner(Puzzle *cur) {
 	if ((cur->graph[1][2] == solve[1][2] 
 	|| cur->graph[2][1] == solve[2][1])
 	&& cur->graph[1][1] != solve[1][1]) {
-		h += 2;
+		h += k;
 	}
 	if ((cur->graph[2][size_p] == solve[2][size_p] 
 	|| cur->graph[1][prev] == solve[1][prev])
 	 && cur->graph[1][size_p] != solve[1][size_p]) {
-		h += 2;
+		h += k;
 	}
 	if ((cur->graph[size_p][2] == solve[size_p][2] 
 	|| cur->graph[prev][1] == solve[prev][1])
 	 && cur->graph[size_p][1] != solve[size_p][1]) {
-		h += 2;
+		h += k;
 	}
 	if ((cur->graph[size_p][prev] == solve[size_p][prev]
 	|| cur->graph[prev][size_p] == solve[prev][size_p])
 	 && cur->graph[size_p][size_p] != solve[size_p][size_p]) {
-		h += 2;
+		h += k;
 	}
 	return(h);
 }
@@ -119,4 +120,8 @@ void Heuristics::printSolvePuzzle() {
 
 int Heuristics::getType() {
 	return(type);
+}
+
+int Heuristics::getCoeff() {
+	return(k);
 }

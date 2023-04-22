@@ -44,7 +44,7 @@ void PuzzleSolver::addNeighbour(Puzzle *puz, int x, int y) {
 		tmp.conflict = h.conflicts_line(&tmp);
 		tmp.start_x = x;
 		tmp.start_y = y;
-		h_map = tmp.h + (tmp.g * k) + (tmp.conflict * k);
+		h_map = tmp.h + (tmp.g * k) + tmp.conflict;
 		if (flag == UNIFORM_COST_SEARCH) {
 			h_map = (tmp.g * k);
 		}
@@ -74,14 +74,12 @@ void PuzzleSolver::getNeighbours(Puzzle *puz) {
 }
 
 void PuzzleSolver::runAlgorithm(Puzzle cur) {
-	if (h.getType() == 2) {
-		k = 10;
-	}
+	k = h.getCoeff() / 2;
 	cur.h = h.init(&cur);
 	cur.conflict = h.conflicts_line(&cur);
 	printPole(&cur);
 	open.insert(cur);
-	int h_map = cur.h + (cur.g * k) + (cur.conflict * k);
+	int h_map = cur.h + (cur.g * k) + cur.conflict;
 	if (flag == UNIFORM_COST_SEARCH) {
 		h_map = cur.g;
 	}
@@ -89,7 +87,7 @@ void PuzzleSolver::runAlgorithm(Puzzle cur) {
 	finish = false;
 	while (finish == false) {
 		cur = min_f();
-		h_map = cur.h + (cur.g * k) + (cur.conflict * k);
+		h_map = cur.h + (cur.g * k) + cur.conflict;
 		if (flag == UNIFORM_COST_SEARCH) {
 			h_map = (cur.g * k);
 		}
@@ -130,7 +128,7 @@ void PuzzleSolver::printResult(Puzzle cur) {
 	print(GRAY, "Complexity in size: ");
 	print(GREEN, std::to_string(count_in_size) + "\n");
 	print(GRAY, "Number of moves: ");
-	print(GREEN, std::to_string(result.size()) + "\n\n");
+	print(GREEN, std::to_string(result.size()) + "\n");
 }
 
 void PuzzleSolver::complexityInSize() {
